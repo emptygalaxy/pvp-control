@@ -3,5 +3,26 @@
   "version": "0.0.1",
   "dependencies": {
     "midi": "^1.0.0"
-  }
+  },
+  "description": "A library for controlling ProVideoPlayer using MIDI",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/emptygalaxy/pvp-control.git"
+  },
+  "keywords": [
+    "pvp",
+    "provideoplayer",
+    "midi"
+  ],
+  "author": "Nick Timman",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/emptygalaxy/pvp-control/issues"
+  },
+  "homepage": "https://github.com/emptygalaxy/pvp-control#readme"
 }
