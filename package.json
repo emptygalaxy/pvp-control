@@ -1,0 +1,7 @@
+{
+  "name": "pvp-control",
+  "version": "0.0.1",
+  "dependencies": {
+    "midi": "^1.0.0"
+  }
+}
