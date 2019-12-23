@@ -12,6 +12,7 @@ const Command = {
     ClearAll: 0,
     ClearLayer: 1,
     ClearTextStream: 2,
+
     GoToBeginning: 3,
     Rewind: 4,
     Play: 5,
@@ -19,10 +20,12 @@ const Command = {
     PlayPause: 7,
     FastForward: 8,
     GoToEnd: 9,
+
     PreviousPlaylist: 10,
     NextPlaylist: 11,
     PreviousCue: 12,
     NextCue: 13,
+
     SelectPlaylist: 14,
     TriggerCue: 15,
     SelectLayer: 16,
@@ -30,7 +33,76 @@ const Command = {
     EnableMask: 18,
     DisableMask: 19,
     EnableEffect: 20,
-    DisableEffect: 21
+    DisableEffect: 21,
+
+    VignetteRadius: 22,
+    ColorAdjustmentHue: 23,
+    ColorAdjustmentSaturation: 24,
+    ColorAdjustmentContrast: 25,
+    ColorAdjustmentBrightness: 26,
+    BlurType: 27,
+    BlurArea: 28,
+    BlurRadius: 29,
+    ColorEffectsMode: 30,
+    ColorEffectsRed: 31,
+    ColorEffectsGreen: 32,
+    ColorEffectsBlue: 33,
+    RGBAdjustRed: 34,
+    RGBAdjustGreen: 35,
+    RGBAdjustBlue: 36,
+    DepthOfFieldX: 37,
+    DepthOfFieldY: 38,
+    DepthOfFieldRadius: 39,
+    OldFilmSepia: 40,
+    OldFilmNoise: 41,
+    OldFilmScratch: 42,
+    OldFilmVignette: 43,
+    KaleidoscopeType: 44,
+    KaleidoscopeSpeed: 45,
+    ColorPosterizeGamma: 46,
+    ColorPosterizeNumberOfColors: 47,
+    StarsSpeed: 48,
+    HalftoneSharpness: 49,
+    HalftoneGrayComponents: 50,
+    HalftoneColorRemoval: 51,
+    RippleSpeed: 52,
+    RippleType: 53,
+    DistortionType: 54,
+    PicassoAnimate: 55,
+    VariableFPS: 56,
+    TileColumns: 57,
+    TileRows: 58,
+    TileGridSize: 59,
+    PlayRate: 60,
+    EdgeMode: 61,
+    ToonMode: 62,
+    ChromaticsMode: 63,
+    ColorWaveSpeed: 64,
+    ColorWaveType: 65,
+};
+
+const Effect = {
+    VignetteRadius: 1,
+    ColorAdjustment: 2,
+    Blur: 3,
+    ColorEffects: 4,
+    RGBAdjust: 5,
+    DepthOfField: 6,
+    OldFilm: 7,
+    Kaleidoscope: 8,
+    ColorPosterize: 9,
+    Stars: 10,
+    Halftone: 11,
+    Ripple: 12,
+    Distortion: 13,
+    Picasso: 14,
+    VariableFPS: 15,
+    Tile: 16,
+    PlayRate: 17,
+    Edge: 18,
+    Toon: 19,
+    Chromatics: 20,
+    ColorWave: 21,
 };
 
 /**
@@ -40,12 +112,18 @@ const Command = {
 let commandOffset = 0;
 
 /**
- *
+ * Highest value that can be passed
+ * @type {number}
+ */
+const maxValue = 127;
+
+/**
+ * Set the offset note number to be used in sending midi notes
  * @param {number} offset
  */
 function setNoteOffset(offset)
 {
-    commandOffset = setNoteOffset;
+    commandOffset = offset;
 }
 
 /**
@@ -53,7 +131,7 @@ function setNoteOffset(offset)
  * @param {number} command
  * @param {number} arg1
  */
-function executeCommand(command, arg1)
+function executeCommand(command, arg1 = 1)
 {
     sendNote(true, 1, commandOffset + command, arg1);
 }
@@ -254,16 +332,35 @@ function disableMask(maskIndex)
  */
 function enableEffect(effectIndex)
 {
+    if(Object.values(Effect).indexOf(effectIndex) === -1)
+        throw new Error('effectIndex is invalid');
+
     executeCommand(Command.EnableEffect, effectIndex);
 }
 
 /**
  *
- * @param {number} effectIndex
+ * @param {number} effectIndex can be referenced from effects constant
  */
 function disableEffect(effectIndex)
 {
+    if(Object.values(Effect).indexOf(effectIndex) === -1)
+        throw new Error('effectIndex is invalid');
+
     executeCommand(Command.DisableEffect, effectIndex);
+}
+
+
+/**
+ *
+ * @param {number} vignetteRadius
+ */
+function setVignetteRadius(vignetteRadius)
+{
+    if(vignetteRadius < 0)
+        vignetteRadius = 0;
+
+    executeCommand(Command.VignetteRadius, (vignetteRadius * maxValue) + 1);
 }
 
 /**
@@ -289,12 +386,12 @@ exports.open = open;
 exports.close = close;
 exports.setNoteOffset = setNoteOffset;
 
-// Clears
+// Clear Commands
 exports.clearAll = clearAll;
 exports.clearLayer = clearLayer;
 exports.clearTextStream = clearTextStream;
 
-// Video control
+// Video Control
 exports.videoGoToBeginning = videoGoToBeginning;
 exports.videoRewind = videoRewind;
 exports.videoPlay = videoPlay;
@@ -303,15 +400,13 @@ exports.videoPlayPause = videoPlayPause;
 exports.videoFastForward = videoFastForward;
 exports.videoGoToEnd = videoGoToEnd;
 
-// Playlist control
+// Presentation Actions
 exports.nextPlaylist = nextPlaylist;
 exports.previousPlaylist = previousPlaylist;
-
-// Cue control
 exports.nextCue = nextCue;
 exports.previousCue = previousCue;
 
-// Indexes
+// Select by Index
 exports.selectPlaylist = selectPlaylist;
 exports.triggerCue = triggerCue;
 exports.selectLayer = selectLayer;
@@ -320,3 +415,8 @@ exports.enableMask = enableMask;
 exports.disableMask = disableMask;
 exports.enableEffect = enableEffect;
 exports.disableEffect = disableEffect;
+
+// Effects
+exports.effect = Effect;
+exports.executeCommand = executeCommand;
+exports.setVignetteRadius = setVignetteRadius;
